@@ -1,8 +1,10 @@
 /*
-To do list
-~~~~~~~~~~~~~~~~
--enemy overlap(no aperating enemies!!!)
+TO DO LIST
+~~~~~~~~~~~~~~~~~~~~~~~~
+-no overlaping enemies
+-character/enemy images
 */
+
 
 
 title('Survival');
@@ -20,7 +22,14 @@ var enemyY = [];
 var tempEnemyX = [];
 var tempEnemyY = [];
 var timer = 0;
-var enemyNum = 3;
+var enemyNum = 6;
+var counter = 0;
+var fps = 1;
+var characterX = 200;  
+var characterY = 330;
+
+character = loadImage("Code_Character.png");
+enemy = loadImage("Code_Enemy.png");
 
 for(i = 0; i < enemyNum; i++) {
 	tempEnemyX[i] = 750;
@@ -29,14 +38,17 @@ for(i = 0; i < enemyNum; i++) {
 	enemyY[i] = 550-i*110;
 }
 // put functions here, just like kahn academy
-var emptySquare = function(x,y) {
+
+var emptySquare = function(x,y) { 
+	return 1;
 	for(i = 0; i < enemyNum; i++) {
-		if (enemyX[i] === x && enemyY[i] ===y){
-			return 1;
+	        if (enemyX[i] === x && enemyY[i] === y){
+			return 0;
 		}
 	}
-	return 0;
+	return 1;
 }
+	
 
 var draw = function() {
 	//tiled floor
@@ -49,54 +61,66 @@ var draw = function() {
 
 
 	//player
-	fill(133,21,0);
-	rect(playerX, playerY, 50, 55);
+	image(character, characterX, characterY);
 	//health bar
 	fill(255,0,0);
 	rect(10,10,healthBarX ,10);
 	for(i = 0; i < enemyNum; i++) {	
-		if (enemyX[i] === playerX && enemyY[i] === playerY) {
+		if (enemyX[i] === characterX && enemyY[i] === characterY) {
 			healthBarX -= 1;
 		}
 	}
-	//exp bar
-	fill(20,231,232);
-	rect(10,25,expBarX,10);
-	//enemy1
+	//counter
+	fill(36,1,239);
+	text(counter + " timer stuffs", 10, 35);
+	var counterFunction = function() {		
+		if (healthBarX < 0) {
+			return 1;
+		}		
+		if (healthBarX > 0) {
+			return 0;
+		}
+	}
+	if (counterFunction() === 0) {			
+		counter += 1;
+	}	
+	//enemy	
 	for(i = 0; i < enemyNum; i++) {
-		if (playerX > enemyX[i]) {
+		if (characterX > enemyX[i]) {
 			if ((tempEnemyX[i] / 50) % 1 === 0) {
-				if (emptySquare(tempEnemyX[i], tempEnemyY[i]) === 1) {
+				if (emptySquare(tempEnemyX[i], enemyY[i]) === 1) {
+					enemyX[i] = tempEnemyX[i];
+				}
+			}
+			image(enemy,enemyX[i],enemyY[i]);
+			tempEnemyX[i] += 1;
+	}
+		if (characterX < enemyX[i]) { 
+			if ((tempEnemyX[i] / 50) % 1 === 0) {
+			    	if (emptySquare(tempEnemyX[i], enemyY[i]) === 1) {
 					enemyX[i] = tempEnemyX[i];
 		
 				}
 			}
-			fill(43,123,0);
-			rect(enemyX[i],enemyY[i],50,55);	
-			tempEnemyX[i] += 1;
-	}
-		if (playerX < enemyX[i]) {
-			if ((tempEnemyX[i] / 50) % 1 === 0) {
-				enemyX[i] = tempEnemyX[i];		
-			}
-			fill(43,123,0);
-			rect(enemyX[i],enemyY[i],50,55);	
+			image(enemy,enemyX[i],enemyY[i]);
 			tempEnemyX[i] -= 1;
 		}
-		if (playerY > enemyY[i]) {
+		if (characterY > enemyY[i]) {
 			if ((tempEnemyY[i] / 55) % 1 === 0) {
-				enemyY[i] = tempEnemyY[i];		
+				if (emptySquare(enemyX[i], tempEnemyY[i]) === 1) {
+					enemyY[i] = tempEnemyY[i];
+				}		
 			}
-			fill(43,123,0);
-			rect(enemyX[i],enemyY[i],50,55);	
+			image(enemyX[i],enemyY[i],50,55);
 			tempEnemyY[i] += 1;
 		}
-		if (playerY < enemyY[i]) {
+		if (characterY < enemyY[i]) {
 			if ((tempEnemyY[i] / 55) % 1 === 0) {
-				enemyY[i] = tempEnemyY[i];		
+				if (emptySquare(enemyX[i], tempEnemyY[i]) === 1) {
+					enemyY[i] = tempEnemyY[i];
+				}			
 			}
-			fill(43,123,0);
-			rect(enemyX[i],enemyY[i],50,55);	
+			image(enemy,enemyX[i],enemyY[i]);
 			tempEnemyY[i] -= 1;
 		}
 	}
@@ -109,39 +133,41 @@ var draw = function() {
 		text("YOU DIED!!!", 250, 300);
 		textSize(25);
 		text("Better luck next time!",275,360);
+		textSize(15);
+		text("Score: " + counter, 350, 400);
 	}
 
 	//side detection
-	if (playerX > 750) {
-		playerX = 750;
+	if (characterX > 750) {
+		characterX = 750;
+	}
+	if (characterX < 0) {
+		characterX = 0;
 	}
 
-	if (playerX < 0) {
-		playerX = 0;
+	if (characterY < 0) {
+		characterY = 0;
 	}
 
-	if (playerY < 0) {
-		playerY = 0;
+	if (characterY > 550) {
+		characterY = 550;
 	}
 
-	if (playerY > 550) {
-		playerY = 550;
-	}
 
 }
 
 var keyPressed = function() {
-	if (keyCode === 83 && playerY < 600) {
-		playerY += 55;
+	if (keyCode === 83) {
+		characterY += 55;
 	}
 	if (keyCode === 87) {
-		playerY -= 55;
+		characterY -= 55;
 	}
 	if (keyCode === 68) {
-		playerX += 50;
+		characterX += 50;
 	}
 	if (keyCode === 65) {
-		playerX -= 50;
+		characterX -= 50;
 	}
     
 }
@@ -159,4 +185,3 @@ var setup = function() {
 
 // call a function (defined up above)
 setup();
-emptySquare();
