@@ -21,10 +21,11 @@ var selected = [];
 var tiles = [];
 var paddleX = 300;
 var paddleY = 550;
-var ballX = 100;
-var ballY = 100;
+var ballX = 400;
+var ballY = 500;
 var ballSpeedX = 5;
 var ballSpeedY = 5;
+var dir = 1;
 
 // put functions here, just like kahn academy
 
@@ -37,10 +38,8 @@ var setup = function() {
       
 };
 // override draw function, by default it will be called 60 times per second
-
-var draw = function() {
-    background(250, 250, 250);
-    for(var i = 0; i < num_cols; i++) {
+/*
+for(var i = 0; i < num_cols; i++) {
 	for(var j = 0; j < num_rows; j++){
             tiles.push(new Tiles(i * 78 + 10, j * 78 + 75, selected.pop()));   
 	}    
@@ -49,29 +48,52 @@ var draw = function() {
     for(var i = 0; i < tiles.length; i++) {
 	tiles[i].drawNotDestroyed();
     }
+*/
 
+var draw = function() {
+    background(250, 250, 250);
+    /*for(var i = 0; i < num_cols; i++) {
+	for(var j = 0; j < num_rows; j++){
+            tiles.push(new Tiles(i * 78 + 10, j * 78 + 75, selected.pop()));   
+	}    
+    }
+
+    for(var i = 0; i < tiles.length; i++) {
+	tiles[i].drawNotDestroyed();
+    }*/
+    
     //paddle
     fill(0, 0, 0);
     rect(paddleX, paddleY, 150, 15);
 
     if(keyIsPressed) {
 	if(keyCode === LEFT) {
-	    paddleX -= 15;
+	    paddleX -= 5;
 	} else if(keyCode === RIGHT) {
-	    paddleX += 15;
+	    paddleX += 5;
 	} 
     }
 
     fill(255, 0, 225);
     strokeWeight(1);
     ellipse(ballX, ballY, 50, 50);
-    //ballX = ballX + ballSpeedX;
-    //ballY = ballY + ballSpeedY;
+    ballX = ballX - ballSpeedX;
+    ballY = ballY - ballSpeedY;
 
     //at left
     if(ballX < 25) {
-
+	ballSpeedX = dir*-random(5);
     }	
+    //at right
+    if(ballX > 775) {
+	ballSpeedX = dir*random(5);
+    }
+    //at top
+    if(ballY < 25) {
+	ballSpeedY = dir*-random(5);
+    }
+    //at paddle
+    
 // call a function (defined up above)
 
 };
